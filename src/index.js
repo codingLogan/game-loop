@@ -5,6 +5,9 @@ canvas.height = window.innerHeight
 canvas.width = window.innerWidth
 const context = canvas.getContext("2d")
 
+const chickenImage = new Image()
+chickenImage.src = "images/chicken.png"
+
 // Set up the buttons
 let pause = false
 document.getElementById("pause-button").addEventListener("click", () => {
@@ -40,6 +43,8 @@ const pet = new Pet(
 const food = []
 
 // Set game loop
+let chickenFrame = 0
+let chickenElapsedFrames = 0
 function update() {
   if (pause) {
     return
@@ -77,9 +82,73 @@ function update() {
   })
 
   // Draw pet
-  context.fillStyle = "#ffffff"
-  context.fillRect(pet.x, pet.y, pet.width, pet.height)
+  if (pet.speed > 0) {
+    // draw right facing frames
+  } else {
+    // draw left facing frames
+  }
+
+  drawSpriteFrame(
+    chickenImage,
+    chickenFrame,
+    pet.animationState[pet.stateMachine.value] * 32,
+    context,
+    pet.x,
+    pet.y
+  )
+
+  // Draw chicken
+  // drawSpriteFrame(chickenImage, 0, 0, context, 0, 32)
+  // drawSpriteFrame(chickenImage, 1, 0, context, 0, 64)
+  // drawSpriteFrame(chickenImage, 2, 0, context, 0, 96)
+  // drawSpriteFrame(chickenImage, 3, 0, context, 0, 128)
+
+  // Example animations
+  // drawSpriteFrame(chickenImage, chickenFrame, 0, context, 0, 164)
+  // drawSpriteFrame(chickenImage, chickenFrame, 32, context, 32, 164)
+  // drawSpriteFrame(chickenImage, chickenFrame, 64, context, 64, 164)
+  // drawSpriteFrame(chickenImage, chickenFrame, 96, context, 96, 164)
+
+  if (chickenElapsedFrames >= 10) {
+    if (chickenFrame === 3) {
+      chickenFrame = 0
+    } else {
+      chickenFrame++
+    }
+
+    chickenElapsedFrames = 0
+  } else {
+    chickenElapsedFrames++
+  }
+
   window.requestAnimationFrame(update)
+}
+
+function drawSpriteFrame(
+  spriteImage,
+  frameNumber,
+  sourceY,
+  context,
+  destinationX,
+  destinationY
+) {
+  const spriteSize = 32
+  const sourceX = frameNumber * spriteSize
+  const sourceWidth = spriteSize
+  const sourceHeight = spriteSize
+  const destinationWidth = spriteSize
+  const destinationHeight = spriteSize
+  context.drawImage(
+    spriteImage,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    destinationX,
+    destinationY,
+    destinationWidth * 2,
+    destinationHeight * 2
+  )
 }
 
 window.requestAnimationFrame(update)

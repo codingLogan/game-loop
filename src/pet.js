@@ -4,7 +4,14 @@ class Pet {
     this.y = y
     this.height = 64
     this.width = 64
-    this.speed = 2
+    this.speed = 1
+
+    // These values line up with the sprite sheet
+    this.animationState = {
+      idle: 2,
+      walk: 0,
+      run: 3,
+    }
 
     this.stateMachine = new StateMachine({
       start: "idle",
