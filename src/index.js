@@ -81,33 +81,20 @@ function update() {
     context.fillRect(f.x, f.y, f.width, f.height)
   })
 
-  // Draw pet
-  if (pet.speed > 0) {
-    // draw right facing frames
-  } else {
-    // draw left facing frames
+  let animationRow = pet.animationState[pet.stateMachine.value]
+  if (pet.moving === "right") {
+    const rightFramesModifier = 4
+    animationRow += rightFramesModifier
   }
 
   drawSpriteFrame(
     chickenImage,
     chickenFrame,
-    pet.animationState[pet.stateMachine.value] * 32,
+    animationRow * 32,
     context,
     pet.x,
     pet.y
   )
-
-  // Draw chicken
-  // drawSpriteFrame(chickenImage, 0, 0, context, 0, 32)
-  // drawSpriteFrame(chickenImage, 1, 0, context, 0, 64)
-  // drawSpriteFrame(chickenImage, 2, 0, context, 0, 96)
-  // drawSpriteFrame(chickenImage, 3, 0, context, 0, 128)
-
-  // Example animations
-  // drawSpriteFrame(chickenImage, chickenFrame, 0, context, 0, 164)
-  // drawSpriteFrame(chickenImage, chickenFrame, 32, context, 32, 164)
-  // drawSpriteFrame(chickenImage, chickenFrame, 64, context, 64, 164)
-  // drawSpriteFrame(chickenImage, chickenFrame, 96, context, 96, 164)
 
   if (chickenElapsedFrames >= 10) {
     if (chickenFrame === 3) {

@@ -5,11 +5,13 @@ class Pet {
     this.height = 64
     this.width = 64
     this.speed = 1
+    this.moving = "right"
 
     // These values line up with the sprite sheet
     this.animationState = {
-      idle: 2,
       walk: 0,
+      bounce: 1,
+      idle: 2,
       run: 3,
     }
 
@@ -70,8 +72,10 @@ class Pet {
   move(direction) {
     if (direction === "left") {
       this.speed = -Math.abs(this.speed)
+      this.moving = "left"
     } else if (direction === "right") {
       this.speed = Math.abs(this.speed)
+      this.moving = "right"
     }
   }
 }
