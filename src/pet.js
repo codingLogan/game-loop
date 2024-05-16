@@ -26,8 +26,7 @@ class Pet {
         events: {
           decide: () => {
             // Stay idle or go walking?
-            const options = ["idle", "walk", "run"]
-            return options[Math.floor(Math.random() * options.length)]
+            return this.handleTransition(["idle", "walk", "run"])
           },
         },
       },
@@ -35,8 +34,7 @@ class Pet {
         events: {
           decide: () => {
             // Stay walking or go idle?
-            const options = ["walk", "run", "idle"]
-            return options[Math.floor(Math.random() * options.length)]
+            return this.handleTransition(["idle", "walk", "run"])
           },
         },
       },
@@ -44,8 +42,7 @@ class Pet {
         events: {
           decide: () => {
             // Stay running or go idle?
-            const options = ["run", "idle"]
-            return options[Math.floor(Math.random() * options.length)]
+            return this.handleTransition(["idle", "run"])
           },
         },
       },
@@ -64,7 +61,18 @@ class Pet {
     }, 3500)
   }
 
+  handleTransition(options) {
+    const decision = options[Math.floor(Math.random() * options.length)]
+
+    // If we're going to a new animation, reset what frame we're on
+    if (decision !== this.stateMachine.value) {
+      this.chickenFrame = 0
+    }
+    return decision
+  }
+
   update() {
+    // Move the chicken
     if (this.stateMachine.value === "idle") {
       return
     } else if (this.stateMachine.value === "walk") {
@@ -100,16 +108,46 @@ class Pet {
       this.y
     )
 
-    if (this.chickenElapsedFrames >= 10) {
-      if (this.chickenFrame === 3) {
-        this.chickenFrame = 0
-      } else {
-        this.chickenFrame++
-      }
+    if (this.stateMachine.value === "idle") {
+      // handle animation for idle
+      if (this.chickenElapsedFrames >= 12) {
+        // Don't loop, stay at the end
+        if (this.chickenFrame < 3) {
+          this.chickenFrame++
+        }
 
-      this.chickenElapsedFrames = 0
-    } else {
-      this.chickenElapsedFrames++
+        this.chickenElapsedFrames = 0
+      } else {
+        this.chickenElapsedFrames++
+      }
+    } else if (this.stateMachine.value === "walk") {
+      // handle animation for walk
+      if (this.chickenElapsedFrames >= 12) {
+        // Loop the animation or continue
+        if (this.chickenFrame === 3) {
+          this.chickenFrame = 0
+        } else {
+          this.chickenFrame++
+        }
+
+        this.chickenElapsedFrames = 0
+      } else {
+        this.chickenElapsedFrames++
+      }
+    } else if (this.stateMachine.value === "run") {
+      // handle animation for run
+      if (this.chickenElapsedFrames >= 12) {
+        // Loop the animation or continue
+        if (this.chickenFrame === 3) {
+          this.chickenFrame = 0
+        } else {
+          this.chickenFrame++
+        }
+
+        this.chickenElapsedFrames = 0
+      } else {
+        this.chickenElapsedFrames++
+      }
     }
   }
 }
