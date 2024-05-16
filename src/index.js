@@ -43,8 +43,6 @@ const pet = new Pet(
 const food = []
 
 // Set game loop
-let chickenFrame = 0
-let chickenElapsedFrames = 0
 function update() {
   if (pause) {
     return
@@ -81,32 +79,7 @@ function update() {
     context.fillRect(f.x, f.y, f.width, f.height)
   })
 
-  let animationRow = pet.animationState[pet.stateMachine.value]
-  if (pet.moving === "right") {
-    const rightFramesModifier = 4
-    animationRow += rightFramesModifier
-  }
-
-  drawSpriteFrame(
-    chickenImage,
-    chickenFrame,
-    animationRow * 32,
-    context,
-    pet.x,
-    pet.y
-  )
-
-  if (chickenElapsedFrames >= 10) {
-    if (chickenFrame === 3) {
-      chickenFrame = 0
-    } else {
-      chickenFrame++
-    }
-
-    chickenElapsedFrames = 0
-  } else {
-    chickenElapsedFrames++
-  }
+  pet.draw(context, chickenImage)
 
   window.requestAnimationFrame(update)
 }

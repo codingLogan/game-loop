@@ -1,11 +1,16 @@
 class Pet {
   constructor(x, y) {
+    // Object variables
     this.x = x
     this.y = y
     this.height = 64
     this.width = 64
     this.speed = 1
     this.moving = "right"
+
+    // Sprite variables
+    this.chickenFrame = 0
+    this.chickenElapsedFrames = 0
 
     // These values line up with the sprite sheet
     this.animationState = {
@@ -76,6 +81,35 @@ class Pet {
     } else if (direction === "right") {
       this.speed = Math.abs(this.speed)
       this.moving = "right"
+    }
+  }
+
+  draw(context, chickenImage) {
+    let animationRow = this.animationState[this.stateMachine.value]
+    if (this.moving === "right") {
+      const rightFramesModifier = 4
+      animationRow += rightFramesModifier
+    }
+
+    drawSpriteFrame(
+      chickenImage,
+      this.chickenFrame,
+      animationRow * 32,
+      context,
+      this.x,
+      this.y
+    )
+
+    if (this.chickenElapsedFrames >= 10) {
+      if (this.chickenFrame === 3) {
+        this.chickenFrame = 0
+      } else {
+        this.chickenFrame++
+      }
+
+      this.chickenElapsedFrames = 0
+    } else {
+      this.chickenElapsedFrames++
     }
   }
 }
