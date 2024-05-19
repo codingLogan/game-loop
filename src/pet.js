@@ -1,5 +1,5 @@
 class Pet {
-  constructor(x, y) {
+  constructor(x, y, animations) {
     // Object variables
     this.x = x
     this.y = y
@@ -9,6 +9,7 @@ class Pet {
     this.moving = "right"
 
     // Sprite variables
+    this.animations = animations
     this.chickenFrame = 0
     this.chickenElapsedFrames = 0
 
@@ -65,6 +66,7 @@ class Pet {
     const decision = options[Math.floor(Math.random() * options.length)]
 
     // If we're going to a new animation, reset what frame we're on
+    // so the animations starts from the beginning
     if (decision !== this.stateMachine.value) {
       this.chickenFrame = 0
     }
@@ -93,19 +95,17 @@ class Pet {
   }
 
   draw(context, chickenImage) {
-    let animationRow = this.animationState[this.stateMachine.value]
-    if (this.moving === "right") {
-      const rightFramesModifier = 4
-      animationRow += rightFramesModifier
-    }
+    let spriteAnimationName =
+      this.stateMachine.value + (this.moving === "right" ? "Right" : "Left")
 
-    drawSpriteFrame(
+    drawAnimationFrame(
       chickenImage,
+      this.animations[spriteAnimationName],
       this.chickenFrame,
-      animationRow * 32,
       context,
       this.x,
-      this.y
+      this.y,
+      2
     )
 
     if (this.stateMachine.value === "idle") {

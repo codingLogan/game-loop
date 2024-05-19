@@ -8,6 +8,31 @@ const context = canvas.getContext("2d")
 const chickenImage = new Image()
 chickenImage.src = "images/chicken.png"
 
+const chickenSpriteSheetConfig = [
+  { name: "walkLeft", width: 32, height: 32, frames: 4 },
+  { name: "bounceLeft", width: 32, height: 32, frames: 4 },
+  { name: "idleLeft", width: 32, height: 32, frames: 4 },
+  { name: "runLeft", width: 32, height: 32, frames: 4 },
+  { name: "walkRight", width: 32, height: 32, frames: 4 },
+  { name: "bounceRight", width: 32, height: 32, frames: 4 },
+  { name: "idleRight", width: 32, height: 32, frames: 4 },
+  { name: "runRight", width: 32, height: 32, frames: 4 },
+]
+/* Animation structure
+{
+    "<animationName>": {
+        "frames": [
+            {"x": 0, "y": 0},
+            ...
+        ],
+        "width": 32,
+        "height": 32
+    },
+    ...
+}
+*/
+const chickenAnimations = parseSpriteAnimations(chickenSpriteSheetConfig)
+
 // Set up the buttons
 let pause = false
 document.getElementById("pause-button").addEventListener("click", () => {
@@ -37,7 +62,8 @@ document.getElementById("feed").addEventListener("click", () => {
 // Initialize the game
 const pet = new Pet(
   ENTITY_CANVAS_MARGIN,
-  canvas.clientHeight - ENTITY_CANVAS_MARGIN - 64 // 64 is pet's height
+  canvas.clientHeight - ENTITY_CANVAS_MARGIN - 64, // 64 is pet's height
+  chickenAnimations
 )
 
 const food = []
@@ -84,30 +110,26 @@ function update() {
   window.requestAnimationFrame(update)
 }
 
-function drawSpriteFrame(
+function drawAnimationFrame(
   spriteImage,
+  animation,
   frameNumber,
-  sourceY,
   context,
   destinationX,
-  destinationY
+  destinationY,
+  scale = 1
 ) {
-  const spriteSize = 32
-  const sourceX = frameNumber * spriteSize
-  const sourceWidth = spriteSize
-  const sourceHeight = spriteSize
-  const destinationWidth = spriteSize
-  const destinationHeight = spriteSize
+  const frame = animation.frames[frameNumber]
   context.drawImage(
     spriteImage,
-    sourceX,
-    sourceY,
-    sourceWidth,
-    sourceHeight,
+    frame.x,
+    frame.y,
+    animation.width,
+    animation.height,
     destinationX,
     destinationY,
-    destinationWidth * 2,
-    destinationHeight * 2
+    animation.width * scale,
+    animation.height * scale
   )
 }
 
