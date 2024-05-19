@@ -59,12 +59,31 @@ document.getElementById("feed").addEventListener("click", () => {
   )
 })
 
+document.getElementById("spawn-pet").addEventListener("click", () => {
+  // Spawn a chicken
+  const safeCanvasWidth = canvas.clientWidth - ENTITY_CANVAS_MARGIN
+  const maxFoodPositionX = safeCanvasWidth - 64 // 64 is food's width
+  pets.push(
+    new Pet(
+      Math.min(
+        Math.round(Math.random() * safeCanvasWidth + ENTITY_CANVAS_MARGIN),
+        maxFoodPositionX
+      ),
+      canvas.clientHeight - ENTITY_CANVAS_MARGIN - 64, // 64 is pet's height
+      chickenAnimations
+    )
+  )
+})
+
 // Initialize the game
 const pet = new Pet(
   ENTITY_CANVAS_MARGIN,
   canvas.clientHeight - ENTITY_CANVAS_MARGIN - 64, // 64 is pet's height
   chickenAnimations
 )
+
+const pets = []
+pets.push(pet)
 
 const food = []
 
@@ -74,15 +93,17 @@ function update() {
     return
   }
 
-  // Move the pet within the game boundary
-  if (pet.x > canvas.clientWidth - ENTITY_CANVAS_MARGIN - pet.width) {
-    pet.move("left")
-  } else if (pet.x < ENTITY_CANVAS_MARGIN) {
-    pet.move("right")
-  }
+  pets.forEach((pet) => {
+    // Move the pet within the game boundary
+    if (pet.x > canvas.clientWidth - ENTITY_CANVAS_MARGIN - pet.width) {
+      pet.move("left")
+    } else if (pet.x < ENTITY_CANVAS_MARGIN) {
+      pet.move("right")
+    }
 
-  // Update the pet
-  pet.update()
+    // Update the pet
+    pet.update()
+  })
 
   // Update any food items
   food.forEach((foodItem) => {
@@ -105,7 +126,9 @@ function update() {
     context.fillRect(f.x, f.y, f.width, f.height)
   })
 
-  pet.draw(context, chickenImage)
+  pets.forEach((pet) => {
+    pet.draw(context, chickenImage)
+  })
 
   window.requestAnimationFrame(update)
 }
