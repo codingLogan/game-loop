@@ -10,16 +10,8 @@ class Pet {
 
     // Sprite variables
     this.animations = animations
-    this.chickenFrame = 0
+    this.chickenFrame = 0 // Which animation frame to draw
     this.chickenElapsedFrames = 0
-
-    // These values line up with the sprite sheet
-    this.animationState = {
-      walk: 0,
-      bounce: 1,
-      idle: 2,
-      run: 3,
-    }
 
     this.stateMachine = new StateMachine({
       start: "idle",
@@ -80,7 +72,7 @@ class Pet {
     } else if (this.stateMachine.value === "walk") {
       this.x += this.speed
     } else if (this.stateMachine.value === "run") {
-      this.x += Math.floor(this.speed * 2)
+      this.x += Math.floor(this.speed * 3)
     }
   }
 
@@ -136,10 +128,10 @@ class Pet {
       }
     } else if (this.stateMachine.value === "run") {
       // handle animation for run
-      if (this.chickenElapsedFrames >= 12) {
+      if (this.chickenElapsedFrames >= 1) {
         // Loop the animation or continue
         if (this.chickenFrame === 3) {
-          this.chickenFrame = 0
+          this.chickenFrame = 1
         } else {
           this.chickenFrame++
         }
