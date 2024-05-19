@@ -103,6 +103,30 @@ function update() {
 
     // Update the pet
     pet.update()
+
+    const checkCollision = (rect1, rect2) => {
+      if (
+        rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y
+      ) {
+        return true
+      }
+
+      return false
+    }
+
+    // Check for pet collisions with a food
+    let foundFood = food.find((f) => {
+      return checkCollision(f, pet)
+    })
+
+    const indexOfFoundFood = food.indexOf(foundFood)
+
+    if (indexOfFoundFood > -1) {
+      food.splice(indexOfFoundFood, 1)
+    }
   })
 
   // Update any food items

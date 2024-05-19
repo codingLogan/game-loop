@@ -62,6 +62,10 @@ class Pet {
   }
 
   handleTransition(options) {
+    if (food.length > 0) {
+      return "run"
+    }
+
     const decision = options[Math.floor(Math.random() * options.length)]
 
     // If we're going to a new animation, reset what frame we're on
