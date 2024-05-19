@@ -19,6 +19,13 @@ class Pet {
         events: {
           decide: () => {
             // Stay idle or go walking?
+            return this.handleTransition(["idle", "walk", "run", "bounce"])
+          },
+        },
+      },
+      bounce: {
+        events: {
+          decide: () => {
             return this.handleTransition(["idle", "walk", "run"])
           },
         },
@@ -27,7 +34,7 @@ class Pet {
         events: {
           decide: () => {
             // Stay walking or go idle?
-            return this.handleTransition(["idle", "walk", "run"])
+            return this.handleTransition(["idle", "walk", "run", "bounce"])
           },
         },
       },
@@ -112,7 +119,10 @@ class Pet {
       } else {
         this.chickenElapsedFrames++
       }
-    } else if (this.stateMachine.value === "walk") {
+    } else if (
+      this.stateMachine.value === "walk" ||
+      this.stateMachine.value === "bounce"
+    ) {
       // handle animation for walk
       if (this.chickenElapsedFrames >= 12) {
         // Loop the animation or continue
