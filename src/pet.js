@@ -7,6 +7,7 @@ class Pet {
     this.width = 64
     this.speed = 1
     this.moving = "right"
+    this.isHungry = true
 
     // Sprite variables
     this.animations = animations
@@ -72,7 +73,7 @@ class Pet {
   }
 
   handleTransition(options) {
-    if (food.length > 0) {
+    if (this.isHungry && food.length > 0) {
       return "run"
     }
 
@@ -102,7 +103,7 @@ class Pet {
 
     // Check for pet collisions with a food
     let foundFood = food.find((f) => {
-      return checkCollision(f, pet)
+      return checkCollision(f, this)
     })
 
     const indexOfFoundFood = food.indexOf(foundFood)
@@ -110,6 +111,7 @@ class Pet {
     // Remove the food
     if (indexOfFoundFood > -1) {
       food.splice(indexOfFoundFood, 1)
+      this.isHungry = false
       clearInterval(this.interval)
       this.stateMachine.transition("eat")
 
@@ -117,6 +119,7 @@ class Pet {
         // This is cleared here, to prevent multiple intervals from being set accidentally
         clearInterval(this.interval)
         this.interval = this.startWandering()
+        this.isHungry = true
       }, 3000)
     }
   }
