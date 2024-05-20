@@ -18,7 +18,6 @@ class Pet {
       idle: {
         events: {
           decide: () => {
-            // Stay idle or go walking?
             return this.handleTransition(["idle", "walk", "run", "bounce"])
           },
         },
@@ -33,7 +32,6 @@ class Pet {
       walk: {
         events: {
           decide: () => {
-            // Stay walking or go idle?
             return this.handleTransition(["idle", "walk", "run", "bounce"])
           },
         },
@@ -41,15 +39,27 @@ class Pet {
       run: {
         events: {
           decide: () => {
-            // Stay running or go idle?
             return this.handleTransition(["idle", "run"])
+          },
+          eat: () => {
+            return this.handleTransition(["eat"])
+          },
+        },
+      },
+      eat: {
+        events: {
+          decide: () => {
+            return this.handleTransition(["idle", "bounce"])
           },
         },
       },
     })
 
-    // This should likely NOT be a setInterval
-    setInterval(() => {
+    this.interval = this.startWandering()
+  }
+
+  startWandering() {
+    return setInterval(() => {
       this.stateMachine.transition("decide")
 
       // Move a random direction
@@ -76,9 +86,50 @@ class Pet {
     return decision
   }
 
+  foodCollisionCheck() {
+    const checkCollision = (rect1, rect2) => {
+      if (
+        rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y
+      ) {
+        return true
+      }
+
+      return false
+    }
+
+    // Check for pet collisions with a food
+    let foundFood = food.find((f) => {
+      return checkCollision(f, pet)
+    })
+
+    const indexOfFoundFood = food.indexOf(foundFood)
+
+    // Remove the food
+    if (indexOfFoundFood > -1) {
+      food.splice(indexOfFoundFood, 1)
+      clearInterval(this.interval)
+      this.stateMachine.transition("eat")
+
+      setTimeout(() => {
+        // This is cleared here, to prevent multiple intervals from being set accidentally
+        clearInterval(this.interval)
+        this.interval = this.startWandering()
+      }, 3000)
+    }
+  }
+
   update() {
+    this.foodCollisionCheck()
+
     // Move the chicken
-    if (this.stateMachine.value === "idle") {
+    if (
+      this.stateMachine.value === "idle" ||
+      this.stateMachine.value === "bounce" ||
+      this.stateMachine.value === "eat"
+    ) {
       return
     } else if (this.stateMachine.value === "walk") {
       this.x += this.speed
@@ -98,8 +149,12 @@ class Pet {
   }
 
   draw(context, chickenImage) {
+    // Temporarily treat "eat" as "bounce", it needs art
+    let animation =
+      this.stateMachine.value === "eat" ? "bounce" : this.stateMachine.value
+
     let spriteAnimationName =
-      this.stateMachine.value + (this.moving === "right" ? "Right" : "Left")
+      animation + (this.moving === "right" ? "Right" : "Left")
 
     drawAnimationFrame(
       chickenImage,
@@ -125,7 +180,8 @@ class Pet {
       }
     } else if (
       this.stateMachine.value === "walk" ||
-      this.stateMachine.value === "bounce"
+      this.stateMachine.value === "bounce" ||
+      this.stateMachine.value === "eat"
     ) {
       // handle animation for walk
       if (this.chickenElapsedFrames >= 12) {
